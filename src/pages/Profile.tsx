@@ -3,16 +3,38 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { CheckCircle, XCircle, LogOut, Settings } from "lucide-react";
+import { CheckCircle, XCircle, LogOut, Settings, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleLogout = () => {
     toast.success("Logged out successfully");
     navigate("/");
+  };
+
+  const handleFetchNews = async () => {
+    setIsFetching(true);
+    try {
+      toast.loading("Fetching and verifying news from CNN Brasil...");
+      
+      const { data, error } = await supabase.functions.invoke('fetch-cnn-news');
+      
+      if (error) throw error;
+      
+      toast.dismiss();
+      toast.success(`Successfully verified ${data.total_verified} news items!`);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.message || "Failed to fetch news");
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   const recentVerifications = [
@@ -73,6 +95,22 @@ export default function Profile() {
             </div>
           </Card>
         </div>
+
+        {/* Admin Actions */}
+        <Card className="p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4">Admin Actions</h2>
+          <Button 
+            onClick={handleFetchNews}
+            disabled={isFetching}
+            className="w-full bg-gradient-to-r from-primary to-secondary"
+          >
+            <RefreshCw className={`w-5 h-5 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
+            {isFetching ? 'Fetching News...' : 'Fetch Latest CNN Brasil News'}
+          </Button>
+          <p className="text-sm text-muted-foreground mt-2">
+            Manually trigger news collection and verification from CNN Brasil RSS feed
+          </p>
+        </Card>
 
         {/* Recent Activity */}
         <Card className="p-6 mb-6">

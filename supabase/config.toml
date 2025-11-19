@@ -1,1 +1,7 @@
 project_id = "uktasyktlthfermkhmwe"
+
+[functions.fetch-cnn-news]
+verify_jwt = false
+
+[functions.verify-news]
+verify_jwt = false

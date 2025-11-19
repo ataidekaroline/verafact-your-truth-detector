@@ -14,7 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      verification_history: {
+        Row: {
+          confidence_score: number
+          id: string
+          input_text: string
+          ml_result: boolean
+          reference_sites: string[] | null
+          true_fact_summary: string | null
+          user_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          confidence_score: number
+          id?: string
+          input_text: string
+          ml_result: boolean
+          reference_sites?: string[] | null
+          true_fact_summary?: string | null
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          id?: string
+          input_text?: string
+          ml_result?: boolean
+          reference_sites?: string[] | null
+          true_fact_summary?: string | null
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      verified_news: {
+        Row: {
+          category_id: string | null
+          confidence_score: number | null
+          content: string | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_verified: boolean
+          published_at: string | null
+          snippet: string | null
+          source_name: string
+          source_url: string
+          title: string
+          verified_at: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          confidence_score?: number | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_verified?: boolean
+          published_at?: string | null
+          snippet?: string | null
+          source_name?: string
+          source_url: string
+          title: string
+          verified_at?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          confidence_score?: number | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_verified?: boolean
+          published_at?: string | null
+          snippet?: string | null
+          source_name?: string
+          source_url?: string
+          title?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verified_news_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
