@@ -32,6 +32,11 @@ export default function Login() {
       });
 
       if (error) {
+        // Handle specific error messages
+        if (error.message.toLowerCase().includes("email not confirmed")) {
+          toast.error("Please verify your email before signing in. Check your inbox for the verification link.");
+          return;
+        }
         toast.error(error.message);
         return;
       }
