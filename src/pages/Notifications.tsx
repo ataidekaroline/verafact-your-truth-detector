@@ -40,23 +40,23 @@ export default function Notifications() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-8">
+    <div className="min-h-screen bg-background pb-24 sm:pb-32 md:pb-8">
       <Header />
       
-      <main className="container mx-auto px-4 pt-24">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28">
         <div className="flex items-center gap-3 mb-6">
-          <Bell className="w-6 h-6 text-primary" />
-          <h1 className="text-3xl font-bold">Notifications</h1>
+          <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+          <h1 className="text-2xl sm:text-3xl font-bold">Notifications</h1>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 pb-6">
           {notifications.map((notification) => (
-            <Card key={notification.id} className="p-4 hover:bg-muted/50 transition-colors cursor-pointer">
+            <Card key={notification.id} className="p-4 hover:bg-muted/50 transition-colors cursor-pointer active:scale-[0.98]">
               <div className="flex items-start gap-3">
-                <div className="mt-1">{getIcon(notification.type)}</div>
-                <div className="flex-1">
-                  <h3 className="font-semibold mb-1">{notification.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
+                <div className="mt-1 flex-shrink-0">{getIcon(notification.type)}</div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">{notification.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">{notification.message}</p>
                   <span className="text-xs text-muted-foreground">{notification.time}</span>
                 </div>
               </div>

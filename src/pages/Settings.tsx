@@ -160,20 +160,20 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-8">
+    <div className="min-h-screen bg-background pb-24 sm:pb-28 md:pb-8">
       <Header />
       
-      <main className="container mx-auto px-4 pt-28 max-w-3xl">
-        <div className="flex items-center gap-4 mb-8">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 max-w-3xl">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/profile")}
-            className="h-10 w-10"
+            className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Settings</h1>
         </div>
 
         {/* Profile Picture */}

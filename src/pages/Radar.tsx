@@ -110,16 +110,16 @@ const Radar = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
-      <main className="container mx-auto px-6 pt-32 pb-32 max-w-4xl">
-        <div className="flex items-center justify-between mb-8">
+      
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-24 sm:pb-32 max-w-4xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Radio className="w-6 h-6 text-primary" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Radio className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Real-Time Radar</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Real-Time Radar</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 Live verified news feed • Updated every 15-30 minutes
               </p>
             </div>
@@ -130,10 +130,10 @@ const Radar = () => {
             disabled={refreshing}
             variant="outline"
             size="lg"
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto min-h-[44px]"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
+            <span className="text-sm sm:text-base">Refresh</span>
           </Button>
         </div>
 

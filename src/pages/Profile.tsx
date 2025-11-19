@@ -123,78 +123,78 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-8">
+    <div className="min-h-screen bg-background pb-24 sm:pb-28 md:pb-8">
       <Header />
       
-      <main className="container mx-auto px-4 pt-28 max-w-5xl">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 max-w-5xl">
         {/* Profile Header */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-5">
-              <Avatar className="w-24 h-24 shadow-[var(--shadow-medium)]">
+        <Card className="p-6 sm:p-8 mb-6 sm:mb-8 shadow-[var(--shadow-medium)] border-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 justify-between">
+            <div className="flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 shadow-[var(--shadow-medium)] flex-shrink-0">
                 {avatarUrl ? (
                   <AvatarImage src={avatarUrl} alt={username} />
                 ) : (
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl sm:text-3xl">
                     {getInitials(username)}
                   </AvatarFallback>
                 )}
               </Avatar>
-              <div>
-                <h1 className="text-3xl font-bold mb-2">{username}</h1>
-                <p className="text-muted-foreground text-base">{email}</p>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2 truncate">{username}</h1>
+                <p className="text-muted-foreground text-sm sm:text-base truncate">{email}</p>
               </div>
             </div>
             <Button 
               variant="outline" 
               size="lg" 
-              className="h-12 w-12"
+              className="h-11 w-11 sm:h-12 sm:w-12 flex-shrink-0 self-end sm:self-auto"
               onClick={() => navigate("/settings")}
             >
-              <Settings className="w-6 h-6" />
+              <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
             </Button>
           </div>
         </Card>
 
         {/* Verification Metrics */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card className="p-8 bg-gradient-to-br from-success/10 to-success/5 border-success/20 border-2 shadow-[var(--shadow-medium)]">
-            <div className="flex items-center gap-5">
-              <div className="p-4 bg-success/20 rounded-2xl">
-                <CheckCircle className="w-10 h-10 text-success" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <Card className="p-6 sm:p-8 bg-gradient-to-br from-success/10 to-success/5 border-success/20 border-2 shadow-[var(--shadow-medium)]">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="p-3 sm:p-4 bg-success/20 rounded-2xl flex-shrink-0">
+                <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-success" />
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Verified as True</p>
-                <p className="text-5xl font-bold text-success">{trueCount}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Verified as True</p>
+                <p className="text-4xl sm:text-5xl font-bold text-success">{trueCount}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-8 bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20 border-2 shadow-[var(--shadow-medium)]">
-            <div className="flex items-center gap-5">
-              <div className="p-4 bg-destructive/20 rounded-2xl">
-                <XCircle className="w-10 h-10 text-destructive" />
+          <Card className="p-6 sm:p-8 bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20 border-2 shadow-[var(--shadow-medium)]">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="p-3 sm:p-4 bg-destructive/20 rounded-2xl flex-shrink-0">
+                <XCircle className="w-8 h-8 sm:w-10 sm:h-10 text-destructive" />
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Detected as False</p>
-                <p className="text-5xl font-bold text-destructive">{falseCount}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Detected as False</p>
+                <p className="text-4xl sm:text-5xl font-bold text-destructive">{falseCount}</p>
               </div>
             </div>
           </Card>
         </div>
 
         {/* Admin Actions */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
-          <h2 className="text-2xl font-bold mb-5">Admin Actions</h2>
+        <Card className="p-6 sm:p-8 mb-6 sm:mb-8 shadow-[var(--shadow-medium)] border-2">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-5">Admin Actions</h2>
           <Button 
             onClick={handleFetchNews}
             disabled={isFetching}
-            className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow)]"
+            className="w-full h-12 sm:h-14 text-sm sm:text-base font-semibold bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow)]"
           >
-            <RefreshCw className={`w-6 h-6 mr-3 ${isFetching ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 ${isFetching ? 'animate-spin' : ''}`} />
             {isFetching ? 'Fetching News...' : 'Fetch Latest CNN Brasil News'}
           </Button>
-          <p className="text-sm text-muted-foreground mt-3 text-center">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-3 text-center">
             Manually trigger news collection and verification from CNN Brasil RSS feed
           </p>
         </Card>
@@ -202,9 +202,9 @@ export default function Profile() {
 
         {/* Recent Verification History */}
         {verificationHistory.length > 0 && (
-          <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
-            <h2 className="text-2xl font-bold mb-6">Recent Verifications</h2>
-            <div className="space-y-4">
+          <Card className="p-6 sm:p-8 mb-6 sm:mb-8 shadow-[var(--shadow-medium)] border-2">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Recent Verifications</h2>
+            <div className="space-y-3 sm:space-y-4">
               {verificationHistory.map((verification) => (
                 <VerificationHistoryCard
                   key={verification.id}
@@ -222,11 +222,11 @@ export default function Profile() {
         {/* Logout Button */}
         <Button 
           variant="outline" 
-          className="w-full h-12"
+          className="w-full h-11 sm:h-12"
           onClick={handleLogout}
         >
-          <LogOut className="w-5 h-5 mr-2" />
-          Sign Out
+          <LogOut className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <span className="text-sm sm:text-base">Sign Out</span>
         </Button>
       </main>
 

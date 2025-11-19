@@ -23,11 +23,18 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-sm">
-      <div className="container mx-auto px-4 md:px-6 py-5 flex items-center justify-between max-w-7xl">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
-          <img src={logo} alt="VeraFact" className="w-12 h-12 rounded-xl" />
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border shadow-sm"
+      style={{
+        paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+      }}
+    >
+      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between max-w-7xl">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(user ? "/home" : "/login")}>
+          <img src={logo} alt="VeraFact" className="w-10 h-10 rounded-xl sm:w-12 sm:h-12" />
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent sm:text-2xl">
             VeraFact
           </h1>
         </div>
