@@ -110,10 +110,10 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen bg-background pb-8 safe-bottom">
       <Header />
       
-      <main className="container mx-auto px-4 pt-32 pb-12 max-w-md">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 max-w-md">
         <div className="text-center mb-10">
           <img src={logo} alt="VeraFact" className="w-24 h-24 rounded-2xl mx-auto mb-6 shadow-[var(--shadow-large)]" />
           <h1 className="text-4xl font-bold mb-3">
@@ -124,7 +124,7 @@ export default function Register() {
           </p>
         </div>
 
-        <Card className="p-8 shadow-[var(--shadow-large)] border-2">
+        <Card className="p-6 sm:p-8 shadow-[var(--shadow-large)] border-2">
           {registrationComplete ? (
             <div className="space-y-6">
               <div className="text-center mb-6">
@@ -200,9 +200,9 @@ export default function Register() {
                 </Alert>
               )}
           
-              <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="username" className="text-base font-semibold">Username</Label>
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+            <div className="space-y-2 sm:space-y-3">
+              <Label htmlFor="username" className="text-sm sm:text-base font-semibold">Username</Label>
               <Input
                 id="username"
                 type="text"
@@ -210,13 +210,13 @@ export default function Register() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="h-12 text-base"
+                className="h-11 sm:h-12 text-sm sm:text-base touch-manipulation"
                 disabled={isLoading}
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-base font-semibold">Email</Label>
+            <div className="space-y-2 sm:space-y-3">
+              <Label htmlFor="email" className="text-sm sm:text-base font-semibold">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -224,13 +224,13 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 text-base"
+                className="h-11 sm:h-12 text-sm sm:text-base touch-manipulation"
                 disabled={isLoading}
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-base font-semibold">Password</Label>
+            <div className="space-y-2 sm:space-y-3">
+              <Label htmlFor="password" className="text-sm sm:text-base font-semibold">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -238,15 +238,15 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-12 text-base"
+                className="h-11 sm:h-12 text-sm sm:text-base touch-manipulation"
                 disabled={isLoading}
               />
             </div>
 
             {password && (
-              <div className="space-y-3 p-5 bg-muted/50 rounded-xl border">
-                <p className="text-base font-semibold mb-3">Password Requirements:</p>
-                <div className="space-y-2.5 text-sm">
+              <div className="space-y-2 sm:space-y-3 p-4 sm:p-5 bg-muted/50 rounded-xl border">
+                <p className="text-sm sm:text-base font-semibold mb-2 sm:mb-3">Password Requirements:</p>
+                <div className="space-y-1.5 sm:space-y-2.5 text-xs sm:text-sm">
                   <ValidationItem valid={passwordRules.minLength} text="Minimum 8 characters" />
                   <ValidationItem valid={passwordRules.maxLength} text="Maximum 10 characters" />
                   <ValidationItem valid={passwordRules.hasUppercase} text="At least 1 uppercase letter" />

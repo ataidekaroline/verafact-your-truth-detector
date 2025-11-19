@@ -177,12 +177,12 @@ export default function Home() {
   }));
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-8">
+    <div className="min-h-screen bg-background pb-24 md:pb-8 safe-bottom">
       <Header />
       
-      <main className="container mx-auto px-4 pt-24 max-w-7xl">
+      <main className="container mx-auto px-4 sm:px-6 pt-20 sm:pt-24 max-w-7xl">
         {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-3xl mb-10 shadow-[var(--shadow-medium)]">
+        <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl mb-8 sm:mb-10 shadow-[var(--shadow-medium)]">
           <div 
             className="absolute inset-0 opacity-20"
             style={{ 
@@ -191,15 +191,15 @@ export default function Home() {
               backgroundPosition: 'center'
             }}
           />
-          <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 p-10 md:p-16">
-            <div className="max-w-3xl mx-auto text-center space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+          <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 p-6 sm:p-10 md:p-16">
+            <div className="max-w-3xl mx-auto text-center space-y-4 sm:space-y-6">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
                 The Truth is Out There.
-                <span className="block mt-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <span className="block mt-2 sm:mt-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Find It.
                 </span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
                 Verify news articles, detect misinformation, and discover the real story behind the headlines.
               </p>
             </div>
@@ -207,26 +207,26 @@ export default function Home() {
         </section>
 
         {/* Verification Input */}
-        <Card className="p-8 mb-10 shadow-[var(--shadow-large)] border-2">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Search className="w-6 h-6 text-primary" />
+        <Card className="p-5 sm:p-8 mb-8 sm:mb-10 shadow-[var(--shadow-large)] border-2">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+                <Search className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold">Verify News</h2>
+              <h2 className="text-xl sm:text-2xl font-bold">Verify News</h2>
             </div>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
               <Input
                 placeholder="Paste a news article URL or text to verify..."
                 value={newsInput}
                 onChange={(e) => setNewsInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
-                className="flex-1 h-14 text-base px-6"
+                className="flex-1 h-12 sm:h-14 text-sm sm:text-base px-4 sm:px-6 touch-manipulation"
               />
               <Button 
                 onClick={handleVerify}
                 disabled={isChecking}
-                className="h-14 px-10 text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] whitespace-nowrap"
+                className="h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] whitespace-nowrap touch-manipulation"
               >
                 {isChecking ? "Checking..." : "Verify"}
               </Button>
@@ -236,28 +236,28 @@ export default function Home() {
 
         {/* Verification Result */}
         {verificationResult && !showFloatingResult && (
-          <section id="verification-result" className="mb-12 animate-in fade-in slide-in-from-top-5 duration-500">
+          <section id="verification-result" className="mb-8 sm:mb-12 animate-in fade-in slide-in-from-top-5 duration-500">
             <VerificationResult result={verificationResult} />
           </section>
         )}
 
         {/* Trending Categories with Verified News */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <TrendingUp className="w-7 h-7 text-primary" />
+        <section className="mb-8 sm:mb-12">
+          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+            <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+              <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
             </div>
-            <h2 className="text-3xl font-bold">Verified News by Category</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold">Verified News by Category</h2>
           </div>
           
           {/* Category Tabs */}
-          <div className="flex gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-2 sm:gap-3 mb-6 sm:mb-8 overflow-x-auto pb-3 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
             {trendingCategories.map((category) => (
               <Button
                 key={category.id}
                 variant={selectedCategory === category.slug ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category.slug)}
-                className={`whitespace-nowrap h-12 px-6 text-base gap-2 transition-all ${
+                className={`whitespace-nowrap h-11 sm:h-12 px-4 sm:px-6 text-sm sm:text-base gap-1.5 sm:gap-2 transition-all touch-manipulation ${
                   selectedCategory === category.slug 
                     ? 'shadow-[var(--shadow-glow)]' 
                     : ''
@@ -270,7 +270,7 @@ export default function Home() {
           </div>
 
           {/* News Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
             {verifiedNews[trendingCategories.find(c => c.slug === selectedCategory)?.id || '']?.slice(0, 6).map((news) => (
               <NewsCard
                 key={news.id}
