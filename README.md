@@ -4,6 +4,18 @@
 
 **VeraFact** is a deep learning-powered fake news detection platform that helps users verify the authenticity of news articles and claims using advanced AI models. Built as a Progressive Web App (PWA), VeraFact combines machine learning with real-time fact-checking to provide instant verification results with confidence scores and supporting references.
 
+## 📸 Screenshots
+
+### Home Page - Verification & Trending News
+The homepage features a clean interface for verifying news articles with instant AI-powered analysis. Users can paste news URLs or text to verify authenticity. Below the verification input, trending verified news is organized by category (Politics, Tech, Science, Health) with confidence scores displayed for each article.
+
+![Home Page](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
+
+### Real-Time Radar - Live Verified News Feed
+The Radar page displays a continuously updated feed of verified news from trusted sources like CNN Brasil. Each article shows its category, confidence score, publication time, and links directly to the source. The feed updates automatically via real-time subscriptions.
+
+![Radar Feed](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2Fradar)
+
 ## 🌟 Features
 
 ### 🔍 News Verification
@@ -12,17 +24,23 @@
 - **Supporting Evidence**: Receive reasoning, fact summaries, and reference links for each verification
 - **Instant Results**: Fast verification with real-time processing
 
+![Verification Feature](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
+
 ### 📡 Real-Time Radar
 - **Live Verified News Feed**: Automatically updated feed of verified news from trusted sources
 - **Category-Based Organization**: Browse news by Politics, Technology, Health, Economy, and more
 - **Real-Time Updates**: News feed updates automatically via WebSocket subscriptions
 - **Manual Refresh**: Trigger on-demand news fetching from CNN Brasil RSS feeds
 
+![Real-Time Radar](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2Fradar)
+
 ### 🏠 Home Dashboard
 - **Trending Verified News**: Explore the latest verified articles by category
 - **Category Filters**: Filter news by specific categories or view all at once
 - **Recent Verifications**: See examples of recently verified news articles
 - **Quick Verification Input**: Submit news for verification directly from the homepage
+
+![Category Filtering](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
 
 ### 👤 User Features
 - **Authentication**: Secure email-based authentication system
