@@ -45,77 +45,77 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-8">
+    <div className="min-h-screen bg-background pb-24 md:pb-8">
       <Header />
       
-      <main className="container mx-auto px-4 pt-24">
+      <main className="container mx-auto px-4 pt-28 max-w-5xl">
         {/* Profile Header */}
-        <Card className="p-6 mb-6">
+        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl">
+            <div className="flex items-center gap-5">
+              <Avatar className="w-24 h-24 shadow-[var(--shadow-medium)]">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
                   JD
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl font-bold">John Doe</h1>
-                <p className="text-muted-foreground">john.doe@example.com</p>
+                <h1 className="text-3xl font-bold mb-2">John Doe</h1>
+                <p className="text-muted-foreground text-base">john.doe@example.com</p>
               </div>
             </div>
-            <Button variant="outline" size="icon">
-              <Settings className="w-5 h-5" />
+            <Button variant="outline" size="lg" className="h-12 w-12">
+              <Settings className="w-6 h-6" />
             </Button>
           </div>
         </Card>
 
         {/* Verification Metrics */}
-        <div className="grid md:grid-cols-2 gap-4 mb-6">
-          <Card className="p-6 bg-gradient-to-br from-success/10 to-success/5 border-success/20">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-success/20 rounded-full">
-                <CheckCircle className="w-8 h-8 text-success" />
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Card className="p-8 bg-gradient-to-br from-success/10 to-success/5 border-success/20 border-2 shadow-[var(--shadow-medium)]">
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-success/20 rounded-2xl">
+                <CheckCircle className="w-10 h-10 text-success" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Verified as True</p>
-                <p className="text-4xl font-bold text-success">187</p>
+                <p className="text-sm text-muted-foreground mb-1">Verified as True</p>
+                <p className="text-5xl font-bold text-success">187</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-destructive/20 rounded-full">
-                <XCircle className="w-8 h-8 text-destructive" />
+          <Card className="p-8 bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20 border-2 shadow-[var(--shadow-medium)]">
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-destructive/20 rounded-2xl">
+                <XCircle className="w-10 h-10 text-destructive" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Detected as False</p>
-                <p className="text-4xl font-bold text-destructive">42</p>
+                <p className="text-sm text-muted-foreground mb-1">Detected as False</p>
+                <p className="text-5xl font-bold text-destructive">42</p>
               </div>
             </div>
           </Card>
         </div>
 
         {/* Admin Actions */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">Admin Actions</h2>
+        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
+          <h2 className="text-2xl font-bold mb-5">Admin Actions</h2>
           <Button 
             onClick={handleFetchNews}
             disabled={isFetching}
-            className="w-full bg-gradient-to-r from-primary to-secondary"
+            className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow)]"
           >
-            <RefreshCw className={`w-5 h-5 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-6 h-6 mr-3 ${isFetching ? 'animate-spin' : ''}`} />
             {isFetching ? 'Fetching News...' : 'Fetch Latest CNN Brasil News'}
           </Button>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-sm text-muted-foreground mt-3 text-center">
             Manually trigger news collection and verification from CNN Brasil RSS feed
           </p>
         </Card>
 
         {/* Recent Activity */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">Recent Verifications</h2>
-          <div className="space-y-3">
+        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
+          <h2 className="text-2xl font-bold mb-6">Recent Verifications</h2>
+          <div className="space-y-4">
             {recentVerifications.map((verification) => (
               <div 
                 key={verification.id}
