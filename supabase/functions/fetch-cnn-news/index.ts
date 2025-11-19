@@ -30,18 +30,27 @@ serve(async (req) => {
     for (const match of itemMatches) {
       const itemXml = match[1];
       
-      const titleMatch = itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
+      // Title doesn't have CDATA wrapper, but may contain HTML entities
+      const titleMatch = itemXml.match(/<title>(.*?)<\/title>/);
       const linkMatch = itemXml.match(/<link>(.*?)<\/link>/);
       const descriptionMatch = itemXml.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/);
       const pubDateMatch = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
       const categoryMatch = itemXml.match(/<category><!\[CDATA\[(.*?)\]\]><\/category>/);
       
       if (titleMatch && linkMatch) {
-        const title = titleMatch[1].trim();
+        // Decode HTML entities in title
+        const title = titleMatch[1]
+          .replace(/&quot;/g, '"')
+          .replace(/&#8220;/g, '"')
+          .replace(/&#8221;/g, '"')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .trim();
         const url = linkMatch[1].trim();
         const snippet = descriptionMatch ? descriptionMatch[1].replace(/<[^>]*>/g, '').trim().substring(0, 200) : '';
         const pubDate = pubDateMatch ? new Date(pubDateMatch[1]) : new Date();
-        const category = categoryMatch ? categoryMatch[1].toLowerCase() : 'politics';
+        const category = categoryMatch ? categoryMatch[1].toLowerCase() : 'entretenimento';
 
         items.push({
           title,
@@ -62,16 +71,24 @@ serve(async (req) => {
 
     const categoryMap = new Map(categories?.map(cat => [cat.slug, cat.id]) || []);
 
-    // Map category names to slugs
+    // Map category names to slugs (CNN Brasil uses Portuguese categories)
     const categoryMapping: Record<string, string> = {
       'política': 'politics',
       'politica': 'politics',
+      'brasil': 'politics',
+      'mundo': 'politics',
       'ciência': 'science',
       'ciencia': 'science',
       'tecnologia': 'tech',
       'tech': 'tech',
       'saúde': 'health',
-      'saude': 'health'
+      'saude': 'health',
+      'medicina': 'health',
+      'entretenimento': 'politics', // default to politics for entertainment
+      'esportes': 'politics', // default to politics for sports
+      'economia': 'politics',
+      'negócios': 'politics',
+      'negocios': 'politics'
     };
 
     // Process and verify each news item
