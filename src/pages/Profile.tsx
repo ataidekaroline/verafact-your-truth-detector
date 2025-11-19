@@ -13,9 +13,17 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isFetching, setIsFetching] = useState(false);
 
-  const handleLogout = () => {
-    toast.success("Logged out successfully");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (error: any) {
+      toast.error("Error signing out");
+      console.error("Logout error:", error);
+    }
   };
 
   const handleFetchNews = async () => {

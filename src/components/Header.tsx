@@ -19,7 +19,7 @@ export const Header = () => {
           <Button variant="ghost" size="lg" onClick={() => navigate("/")} className="text-base font-medium">
             Discover
           </Button>
-          <Button variant="default" size="lg" onClick={() => navigate("/auth")} className="bg-gradient-to-r from-primary to-secondary text-base font-semibold">
+          <Button variant="default" size="lg" onClick={() => navigate("/login")} className="bg-gradient-to-r from-primary to-secondary text-base font-semibold">
             Sign In
           </Button>
         </nav>
