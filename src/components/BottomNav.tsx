@@ -1,4 +1,4 @@
-import { Home, Compass, User, Bell } from "lucide-react";
+import { Radio, Compass, User, Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -7,8 +7,9 @@ export const BottomNav = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: Bell, label: "Notifications", path: "/notifications" },
     { icon: Compass, label: "Discover", path: "/" },
+    { icon: Radio, label: "Radar", path: "/radar" },
+    { icon: Bell, label: "Alerts", path: "/notifications" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
