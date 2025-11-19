@@ -1,20 +1,23 @@
-# VeraFact
 
-![VeraFact Logo](src/assets/verafact-logo.png)
+<div align="center">
+  
+# VeraFact
+  
+</div>
+
+<p align="center">
+  <img src="src/assets/verafact-logo.png" alt="VeraFact Logo" width="600" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-4.9-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.3-blue?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Supabase-black?style=for-the-badge&logo=supabase" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Vite-4.0-red?style=for-the-badge&logo=vite" alt="Vite" />
+</p>
 
 **VeraFact** is a deep learning-powered fake news detection platform that helps users verify the authenticity of news articles and claims using advanced AI models. Built as a Progressive Web App (PWA), VeraFact combines machine learning with real-time fact-checking to provide instant verification results with confidence scores and supporting references.
-
-## 📸 Screenshots
-
-### Home Page - Verification & Trending News
-The homepage features a clean interface for verifying news articles with instant AI-powered analysis. Users can paste news URLs or text to verify authenticity. Below the verification input, trending verified news is organized by category (Politics, Tech, Science, Health) with confidence scores displayed for each article.
-
-![Home Page](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
-
-### Real-Time Radar - Live Verified News Feed
-The Radar page displays a continuously updated feed of verified news from trusted sources like CNN Brasil. Each article shows its category, confidence score, publication time, and links directly to the source. The feed updates automatically via real-time subscriptions.
-
-![Radar Feed](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2Fradar)
 
 ## 🌟 Features
 
@@ -24,23 +27,17 @@ The Radar page displays a continuously updated feed of verified news from truste
 - **Supporting Evidence**: Receive reasoning, fact summaries, and reference links for each verification
 - **Instant Results**: Fast verification with real-time processing
 
-![Verification Feature](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
-
 ### 📡 Real-Time Radar
 - **Live Verified News Feed**: Automatically updated feed of verified news from trusted sources
 - **Category-Based Organization**: Browse news by Politics, Technology, Health, Economy, and more
 - **Real-Time Updates**: News feed updates automatically via WebSocket subscriptions
 - **Manual Refresh**: Trigger on-demand news fetching from CNN Brasil RSS feeds
 
-![Real-Time Radar](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2Fradar)
-
 ### 🏠 Home Dashboard
 - **Trending Verified News**: Explore the latest verified articles by category
 - **Category Filters**: Filter news by specific categories or view all at once
 - **Recent Verifications**: See examples of recently verified news articles
 - **Quick Verification Input**: Submit news for verification directly from the homepage
-
-![Category Filtering](https://lovable.dev/projects/250a6770-45a0-40a0-8fdd-1d6334c08a9e/sandbox/screenshot?path=%2F)
 
 ### 👤 User Features
 - **Authentication**: Secure email-based authentication system
@@ -86,13 +83,13 @@ The Radar page displays a continuously updated feed of verified news from truste
 ### Installation
 
 1. **Clone the repository**
-```bash
-git clone <YOUR_GIT_URL>
+```
+git clone <https://github.com/ataidekaroline/verafact-your-truth-detector.git>
 cd verafact
 ```
 
 2. **Install dependencies**
-```bash
+```
 npm install
 ```
 
@@ -103,7 +100,7 @@ The project uses Lovable Cloud, so environment variables are automatically confi
 - `VITE_SUPABASE_PROJECT_ID`
 
 4. **Start development server**
-```bash
+```
 npm run dev
 ```
 
@@ -176,19 +173,19 @@ All colors are defined as CSS custom properties in `src/index.css` and configure
 
 ## 📊 Key Technologies
 
-| Technology | Purpose |
-|-----------|---------|
-| React 18 | UI framework |
-| TypeScript | Type safety |
-| Vite | Build tool and dev server |
-| Tailwind CSS | Styling framework |
-| Radix UI | Accessible component primitives |
-| React Query | Server state management |
-| React Router | Client-side routing |
-| Supabase | Backend and database |
-| Lovable AI | AI-powered verification |
-| date-fns | Date formatting |
-| Lucide React | Icon library |
+| Technology  | Purpose                       |
+|-------------|-------------------------------|
+| React 18    | UI framework                  |
+| TypeScript  | Type safety                  |
+| Vite        | Build tool and dev server    |
+| Tailwind CSS| Styling framework            |
+| Radix UI    | Accessible component primitives |
+| React Query | Server state management      |
+| React Router| Client-side routing          |
+| Supabase    | Backend and database         |
+| Lovable AI  | AI-powered verification      |
+| date-fns    | Date formatting              |
+| Lucide React| Icon library                 |
 
 ## 🔐 Authentication
 
@@ -215,7 +212,7 @@ See [Lovable Self-Hosting Guide](https://docs.lovable.dev/tips-tricks/self-hosti
 ## 🧪 Development
 
 ### Available Scripts
-```bash
+```
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build
@@ -259,4 +256,6 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ using [Lovable](https://lovable.dev)**
+<p align="center">
+  **Built with ❤️ using [Lovable](https://lovable.dev)**
+</p>
