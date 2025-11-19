@@ -18,9 +18,15 @@ serve(async (req) => {
 
     console.log('Fetching news from CNN Brasil RSS feed...');
 
-    // Fetch CNN Brasil RSS feed
+    // Fetch CNN Brasil RSS feed with proper headers to bypass Cloudflare
     const rssUrl = 'https://www.cnnbrasil.com.br/feed/';
-    const response = await fetch(rssUrl);
+    const response = await fetch(rssUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      }
+    });
     const rssText = await response.text();
     
     console.log('RSS feed fetched, length:', rssText.length);
