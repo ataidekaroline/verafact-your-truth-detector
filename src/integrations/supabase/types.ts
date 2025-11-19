@@ -35,6 +35,27 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          username: string
+          username_updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          username: string
+          username_updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          username?: string
+          username_updated_at?: string | null
+        }
+        Relationships: []
+      }
       verification_history: {
         Row: {
           confidence_score: number
@@ -129,7 +150,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_next_user_number: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
