@@ -7,11 +7,66 @@ import { CheckCircle, XCircle, LogOut, Settings, RefreshCw } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { UsernameEditDialog } from "@/components/UsernameEditDialog";
 
 export default function Profile() {
   const navigate = useNavigate();
   const [isFetching, setIsFetching] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [usernameUpdatedAt, setUsernameUpdatedAt] = useState<string | null>(null);
+  const [trueCount, setTrueCount] = useState(0);
+  const [falseCount, setFalseCount] = useState(0);
+  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      setEmail(user.email || "");
+
+      // Get profile data
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username, username_updated_at")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setUsername(profile.username);
+        setUsernameUpdatedAt(profile.username_updated_at);
+      }
+
+      // Get verification counts
+      const { data: verifications } = await supabase
+        .from("verification_history")
+        .select("ml_result")
+        .eq("user_id", user.id);
+
+      if (verifications) {
+        const trueVerifications = verifications.filter(v => v.ml_result === true).length;
+        const falseVerifications = verifications.filter(v => v.ml_result === false).length;
+        setTrueCount(trueVerifications);
+        setFalseCount(falseVerifications);
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+      toast.error("Failed to load profile data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -45,12 +100,20 @@ export default function Profile() {
     }
   };
 
-  const recentVerifications = [
-    { id: 1, title: "Climate Change Report", result: true, date: "2 hours ago" },
-    { id: 2, title: "Health Miracle Claim", result: false, date: "5 hours ago" },
-    { id: 3, title: "Economic Forecast", result: true, date: "1 day ago" },
-    { id: 4, title: "Celebrity News", result: false, date: "2 days ago" },
-  ];
+  const getInitials = (name: string) => {
+    if (name.startsWith("@user")) {
+      return "U" + name.slice(5, 6);
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
@@ -63,15 +126,20 @@ export default function Profile() {
             <div className="flex items-center gap-5">
               <Avatar className="w-24 h-24 shadow-[var(--shadow-medium)]">
                 <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
-                  JD
+                  {getInitials(username)}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-3xl font-bold mb-2">John Doe</h1>
-                <p className="text-muted-foreground text-base">john.doe@example.com</p>
+                <h1 className="text-3xl font-bold mb-2">{username}</h1>
+                <p className="text-muted-foreground text-base">{email}</p>
               </div>
             </div>
-            <Button variant="outline" size="lg" className="h-12 w-12">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="h-12 w-12"
+              onClick={() => setShowUsernameDialog(true)}
+            >
               <Settings className="w-6 h-6" />
             </Button>
           </div>
@@ -86,7 +154,7 @@ export default function Profile() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Verified as True</p>
-                <p className="text-5xl font-bold text-success">187</p>
+                <p className="text-5xl font-bold text-success">{trueCount}</p>
               </div>
             </div>
           </Card>
@@ -98,7 +166,7 @@ export default function Profile() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Detected as False</p>
-                <p className="text-5xl font-bold text-destructive">42</p>
+                <p className="text-5xl font-bold text-destructive">{falseCount}</p>
               </div>
             </div>
           </Card>
@@ -120,37 +188,6 @@ export default function Profile() {
           </p>
         </Card>
 
-        {/* Recent Activity */}
-        <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
-          <h2 className="text-2xl font-bold mb-6">Recent Verifications</h2>
-          <div className="space-y-4">
-            {recentVerifications.map((verification) => (
-              <div 
-                key={verification.id}
-                className="flex items-center justify-between p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  {verification.result ? (
-                    <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-destructive flex-shrink-0" />
-                  )}
-                  <div>
-                    <p className="font-medium">{verification.title}</p>
-                    <p className="text-sm text-muted-foreground">{verification.date}</p>
-                  </div>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded-full ${
-                  verification.result 
-                    ? "bg-success/20 text-success" 
-                    : "bg-destructive/20 text-destructive"
-                }`}>
-                  {verification.result ? "True" : "False"}
-                </span>
-              </div>
-            ))}
-          </div>
-        </Card>
 
         {/* Logout Button */}
         <Button 
@@ -162,6 +199,14 @@ export default function Profile() {
           Sign Out
         </Button>
       </main>
+
+      <UsernameEditDialog
+        open={showUsernameDialog}
+        onOpenChange={setShowUsernameDialog}
+        currentUsername={username}
+        lastUpdated={usernameUpdatedAt}
+        onSuccess={loadUserData}
+      />
 
       <BottomNav />
     </div>
