@@ -48,9 +48,7 @@ export default function Auth() {
       
       <main className="container mx-auto px-4 pt-32 pb-12 max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-block mb-6">
-            <img src={logo} alt="VeraFact" className="w-32 h-32 object-contain mx-auto" />
-          </div>
+          <img src={logo} alt="VeraFact" className="w-24 h-24 rounded-2xl mx-auto mb-6 shadow-[var(--shadow-large)]" />
           <h1 className="text-4xl font-bold mb-3">
             {isSignUp ? "Create Account" : "Welcome Back"}
           </h1>
