@@ -26,32 +26,34 @@ export const NewsCard = ({
   });
 
   return (
-    <Card className="p-4 hover:shadow-[var(--shadow-medium)] transition-shadow">
-      <div className="flex items-start gap-3">
-        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-1" />
+    <Card className="p-5 hover:shadow-[var(--shadow-large)] transition-all hover:scale-[1.02] duration-200 border-2">
+      <div className="flex items-start gap-4">
+        <div className="p-2 bg-green-500/10 rounded-lg flex-shrink-0">
+          <CheckCircle className="w-6 h-6 text-green-500" />
+        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start gap-2 mb-2">
-            <h3 className="font-semibold text-sm leading-tight flex-1">{title}</h3>
-            <Badge variant="default" className="text-xs whitespace-nowrap bg-green-500/20 text-green-600 border-green-500/30">
+          <div className="flex items-start gap-3 mb-3">
+            <h3 className="font-semibold text-base leading-snug flex-1">{title}</h3>
+            <Badge variant="default" className="text-xs whitespace-nowrap bg-green-500/20 text-green-600 border-green-500/30 px-3 py-1">
               {confidencePercent}%
             </Badge>
           </div>
           
           {snippet && (
-            <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+            <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
               {snippet}
             </p>
           )}
           
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{sourceName} • {timeAgo}</span>
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
+            <span className="font-medium">{sourceName} • {timeAgo}</span>
             <a 
               href={sourceUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-primary hover:underline"
+              className="flex items-center gap-1.5 text-primary hover:underline font-medium transition-colors"
             >
-              Ver <ExternalLink className="w-3 h-3" />
+              Ver notícia <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>

@@ -43,28 +43,27 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-8">
       <Header />
       
-      <main className="container mx-auto px-4 pt-24 pb-12">
-        <div className="max-w-md mx-auto">
-          <div className="text-center mb-8">
-            <img src={logo} alt="VeraFact" className="w-20 h-20 rounded-2xl mx-auto mb-4" />
-            <h1 className="text-3xl font-bold mb-2">
-              {isSignUp ? "Create Account" : "Welcome Back"}
-            </h1>
-            <p className="text-muted-foreground">
-              {isSignUp 
-                ? "Join VeraFact to start verifying news" 
-                : "Sign in to access your verification history"}
-            </p>
-          </div>
+      <main className="container mx-auto px-4 pt-32 pb-12 max-w-md">
+        <div className="text-center mb-10">
+          <img src={logo} alt="VeraFact" className="w-24 h-24 rounded-2xl mx-auto mb-6 shadow-[var(--shadow-large)]" />
+          <h1 className="text-4xl font-bold mb-3">
+            {isSignUp ? "Create Account" : "Welcome Back"}
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            {isSignUp 
+              ? "Join VeraFact to start verifying news" 
+              : "Sign in to access your verification history"}
+          </p>
+        </div>
 
-          <Card className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className="p-8 shadow-[var(--shadow-large)] border-2">
+          <form onSubmit={handleSubmit} className="space-y-6">
               {isSignUp && (
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="username" className="text-base font-semibold">Username</Label>
                   <Input
                     id="username"
                     type="text"
@@ -72,12 +71,13 @@ export default function Auth() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
+                    className="h-12 text-base"
                   />
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-base font-semibold">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -85,11 +85,12 @@ export default function Auth() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="h-12 text-base"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+              <div className="space-y-3">
+                <Label htmlFor="password" className="text-base font-semibold">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -97,13 +98,14 @@ export default function Auth() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="h-12 text-base"
                 />
               </div>
 
               {isSignUp && password && (
-                <div className="space-y-2 p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-medium mb-2">Password Requirements:</p>
-                  <div className="space-y-1 text-sm">
+                <div className="space-y-3 p-5 bg-muted/50 rounded-xl border">
+                  <p className="text-base font-semibold mb-3">Password Requirements:</p>
+                  <div className="space-y-2.5 text-sm">
                     <ValidationItem valid={passwordRules.minLength} text="Minimum 8 characters" />
                     <ValidationItem valid={passwordRules.maxLength} text="Maximum 10 characters" />
                     <ValidationItem valid={passwordRules.hasUppercase} text="At least 1 uppercase letter" />
@@ -115,16 +117,16 @@ export default function Auth() {
 
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] mt-8"
               >
                 {isSignUp ? "Create Account" : "Sign In"}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-primary hover:underline"
+                className="text-base text-primary hover:underline font-medium"
               >
                 {isSignUp 
                   ? "Already have an account? Sign in" 
@@ -139,12 +141,14 @@ export default function Auth() {
 }
 
 const ValidationItem = ({ valid, text }: { valid: boolean; text: string }) => (
-  <div className="flex items-center gap-2">
-    {valid ? (
-      <Check className="w-4 h-4 text-success" />
-    ) : (
-      <X className="w-4 h-4 text-destructive" />
-    )}
-    <span className={valid ? "text-success" : "text-muted-foreground"}>{text}</span>
+  <div className="flex items-center gap-3">
+    <div className={`p-1 rounded-full ${valid ? 'bg-success/20' : 'bg-muted'}`}>
+      {valid ? (
+        <Check className="w-4 h-4 text-success" />
+      ) : (
+        <X className="w-4 h-4 text-muted-foreground" />
+      )}
+    </div>
+    <span className={`text-base ${valid ? "text-success font-medium" : "text-muted-foreground"}`}>{text}</span>
   </div>
 );
