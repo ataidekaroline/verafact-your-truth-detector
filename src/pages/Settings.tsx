@@ -177,29 +177,29 @@ export default function Settings() {
         </div>
 
         {/* Profile Picture */}
-        <Card className="p-8 mb-6 shadow-[var(--shadow-medium)] border-2">
-          <div className="flex items-center gap-6">
-            <Avatar className="w-24 h-24 shadow-[var(--shadow-medium)]">
+        <Card className="p-6 sm:p-8 mb-5 sm:mb-6 shadow-[var(--shadow-medium)] border-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
+            <Avatar className="w-20 h-20 sm:w-24 sm:h-24 shadow-[var(--shadow-medium)] flex-shrink-0">
               {avatarUrl ? (
                 <AvatarImage src={avatarUrl} alt={username} />
               ) : (
-                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-2xl sm:text-3xl">
                   {getInitials(username)}
                 </AvatarFallback>
               )}
             </Avatar>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-2">Profile Picture</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+            <div className="flex-1 w-full">
+              <h3 className="text-base sm:text-lg font-semibold mb-2">Profile Picture</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                 Upload a profile picture. Max size 2MB.
               </p>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <Button
                   variant="outline"
                   size="sm"
                   disabled={uploading}
                   onClick={() => document.getElementById("avatar-upload")?.click()}
-                  className="h-10"
+                  className="h-10 flex-1 sm:flex-initial min-w-[120px]"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   {uploading ? "Uploading..." : "Upload"}
@@ -228,26 +228,26 @@ export default function Settings() {
         </Card>
 
         {/* Account Information */}
-        <Card className="p-8 mb-6 shadow-[var(--shadow-medium)] border-2">
-          <div className="flex items-center gap-3 mb-6">
-            <User className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-bold">Account Information</h2>
+        <Card className="p-6 sm:p-8 mb-5 sm:mb-6 shadow-[var(--shadow-medium)] border-2">
+          <div className="flex items-center gap-3 mb-5 sm:mb-6">
+            <User className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+            <h2 className="text-lg sm:text-xl font-bold">Account Information</h2>
           </div>
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-base">Username</Label>
+              <Label htmlFor="username" className="text-sm sm:text-base">Username</Label>
               <div className="flex gap-3">
                 <Input
                   id="username"
                   value={username}
                   disabled
-                  className="h-12 bg-muted flex-1"
+                  className="h-11 sm:h-12 bg-muted flex-1 text-sm sm:text-base"
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setShowUsernameDialog(true)}
-                  className="h-12 w-12"
+                  className="h-11 w-11 sm:h-12 sm:w-12 flex-shrink-0"
                 >
                   <Edit className="w-4 h-4" />
                 </Button>
@@ -257,12 +257,12 @@ export default function Settings() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-base">Email</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
               <Input
                 id="email"
                 value={email}
                 disabled
-                className="h-12 bg-muted"
+                className="h-11 sm:h-12 bg-muted text-sm sm:text-base"
               />
               <p className="text-xs text-muted-foreground">
                 Contact support to change your email
@@ -272,18 +272,18 @@ export default function Settings() {
         </Card>
 
         {/* Notification Settings */}
-        <Card className="p-8 mb-6 shadow-[var(--shadow-medium)] border-2">
-          <div className="flex items-center gap-3 mb-6">
-            <Bell className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-bold">Notifications</h2>
+        <Card className="p-6 sm:p-8 mb-5 sm:mb-6 shadow-[var(--shadow-medium)] border-2">
+          <div className="flex items-center gap-3 mb-5 sm:mb-6">
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+            <h2 className="text-lg sm:text-xl font-bold">Notifications</h2>
           </div>
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 flex-1">
-                <Label htmlFor="email-notif" className="text-base font-medium">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1 flex-1 min-w-0">
+                <Label htmlFor="email-notif" className="text-sm sm:text-base font-medium">
                   Email Notifications
                 </Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Receive verification updates via email
                 </p>
               </div>
@@ -291,15 +291,16 @@ export default function Settings() {
                 id="email-notif"
                 checked={emailNotifications}
                 onCheckedChange={setEmailNotifications}
+                className="flex-shrink-0"
               />
             </div>
             <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 flex-1">
-                <Label htmlFor="push-notif" className="text-base font-medium">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1 flex-1 min-w-0">
+                <Label htmlFor="push-notif" className="text-sm sm:text-base font-medium">
                   Push Notifications
                 </Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Get push notifications for important updates
                 </p>
               </div>
@@ -307,15 +308,16 @@ export default function Settings() {
                 id="push-notif"
                 checked={pushNotifications}
                 onCheckedChange={setPushNotifications}
+                className="flex-shrink-0"
               />
             </div>
             <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 flex-1">
-                <Label htmlFor="verify-alerts" className="text-base font-medium">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1 flex-1 min-w-0">
+                <Label htmlFor="verify-alerts" className="text-sm sm:text-base font-medium">
                   Verification Alerts
                 </Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Alert me when verification completes
                 </p>
               </div>
@@ -323,6 +325,7 @@ export default function Settings() {
                 id="verify-alerts"
                 checked={verificationAlerts}
                 onCheckedChange={setVerificationAlerts}
+                className="flex-shrink-0"
               />
             </div>
           </div>
