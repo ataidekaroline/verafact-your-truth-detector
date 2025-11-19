@@ -43,7 +43,7 @@ export default function Login() {
 
       if (data.user) {
         toast.success("Welcome back!");
-        navigate("/profile");
+        navigate("/home");
       }
     } catch (error: any) {
       toast.error("An error occurred during login");
