@@ -22,17 +22,29 @@ serve(async (req) => {
     const rssUrl = 'https://www.cnnbrasil.com.br/feed/';
     const response = await fetch(rssUrl);
     const rssText = await response.text();
+    
+    console.log('RSS feed fetched, length:', rssText.length);
+    console.log('First 500 chars:', rssText.substring(0, 500));
 
     // Parse RSS feed (simple XML parsing)
     const items: any[] = [];
-    const itemMatches = rssText.matchAll(/<item>([\s\S]*?)<\/item>/g);
+    const itemMatches = Array.from(rssText.matchAll(/<item>([\s\S]*?)<\/item>/g));
+    
+    console.log('Item matches found:', itemMatches.length);
+
+    console.log('Item matches found:', itemMatches.length);
 
     for (const match of itemMatches) {
       const itemXml = match[1];
+      console.log('Processing item, first 200 chars:', itemXml.substring(0, 200));
       
       // Title doesn't have CDATA wrapper, but may contain HTML entities
       const titleMatch = itemXml.match(/<title>(.*?)<\/title>/);
       const linkMatch = itemXml.match(/<link>(.*?)<\/link>/);
+      
+      console.log('Title match:', titleMatch ? 'found' : 'not found');
+      console.log('Link match:', linkMatch ? 'found' : 'not found');
+      
       const descriptionMatch = itemXml.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/);
       const pubDateMatch = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
       const categoryMatch = itemXml.match(/<category><!\[CDATA\[(.*?)\]\]><\/category>/);
@@ -51,6 +63,8 @@ serve(async (req) => {
         const snippet = descriptionMatch ? descriptionMatch[1].replace(/<[^>]*>/g, '').trim().substring(0, 200) : '';
         const pubDate = pubDateMatch ? new Date(pubDateMatch[1]) : new Date();
         const category = categoryMatch ? categoryMatch[1].toLowerCase() : 'entretenimento';
+        
+        console.log('Adding item:', title.substring(0, 50));
 
         items.push({
           title,
