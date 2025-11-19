@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Check, X } from "lucide-react";
+import { Check, X, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
   const navigate = useNavigate();
 
   // Password validation rules
@@ -42,6 +44,7 @@ export default function Register() {
     }
 
     setIsLoading(true);
+    setEmailExists(false);
 
     try {
       const redirectUrl = `${window.location.origin}/`;
@@ -58,6 +61,13 @@ export default function Register() {
       });
 
       if (error) {
+        // Check if error is about user already registered
+        if (error.message.toLowerCase().includes("already") || 
+            error.message.toLowerCase().includes("registered") ||
+            error.status === 422) {
+          setEmailExists(true);
+          return;
+        }
         toast.error(error.message);
         return;
       }
@@ -90,6 +100,32 @@ export default function Register() {
         </div>
 
         <Card className="p-8 shadow-[var(--shadow-large)] border-2">
+          {emailExists && (
+            <Alert className="mb-6 border-destructive/50 bg-destructive/10">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              <AlertDescription className="text-base">
+                <p className="font-semibold text-destructive mb-3">This email is already registered</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                    className="flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                  >
+                    Go to Login
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/forgot-password")}
+                    className="flex-1"
+                  >
+                    Recover Password
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="username" className="text-base font-semibold">Username</Label>

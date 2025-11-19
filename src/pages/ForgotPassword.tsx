@@ -37,8 +37,10 @@ export default function ForgotPassword() {
         return;
       }
 
+      // Note: Supabase doesn't return an error for non-existent emails (security best practice)
+      // Always show success to prevent email enumeration
       setEmailSent(true);
-      toast.success("Password reset email sent! Check your inbox.");
+      toast.success("If this email is registered, you'll receive a reset link.");
     } catch (error: any) {
       toast.error("An error occurred. Please try again.");
       console.error("Password reset error:", error);
@@ -93,10 +95,13 @@ export default function ForgotPassword() {
             <div className="space-y-6">
               <div className="p-6 bg-muted/50 rounded-xl border text-center">
                 <p className="text-base text-muted-foreground">
-                  We've sent a password reset link to <span className="font-semibold text-foreground">{email}</span>
+                  If <span className="font-semibold text-foreground">{email}</span> is registered, you'll receive a password reset link.
                 </p>
                 <p className="text-sm text-muted-foreground mt-3">
                   Click the link in the email to reset your password. The link will expire in 1 hour.
+                </p>
+                <p className="text-sm text-muted-foreground mt-3">
+                  If you don't receive an email, the address may not be registered.
                 </p>
               </div>
               
