@@ -93,6 +93,15 @@ export default function Login() {
               />
             </div>
 
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
             <Button 
               type="submit" 
               className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] mt-8"
