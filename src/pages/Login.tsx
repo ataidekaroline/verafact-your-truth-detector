@@ -54,24 +54,24 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen bg-background pb-8 safe-bottom">
       <Header />
       
-      <main className="container mx-auto px-4 pt-32 pb-12 max-w-md">
-        <div className="text-center mb-10">
-          <img src={logo} alt="VeraFact" className="w-24 h-24 rounded-2xl mx-auto mb-6 shadow-[var(--shadow-large)]" />
-          <h1 className="text-4xl font-bold mb-3">
+      <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 max-w-md">
+        <div className="text-center mb-8 sm:mb-10">
+          <img src={logo} alt="VeraFact" className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl mx-auto mb-4 sm:mb-6 shadow-[var(--shadow-large)]" />
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3">
             Welcome Back
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base sm:text-lg">
             Sign in to access your verification history
           </p>
         </div>
 
-        <Card className="p-8 shadow-[var(--shadow-large)] border-2">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-base font-semibold">Email</Label>
+        <Card className="p-6 sm:p-8 shadow-[var(--shadow-large)] border-2">
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+            <div className="space-y-2 sm:space-y-3">
+              <Label htmlFor="email" className="text-sm sm:text-base font-semibold">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -79,13 +79,13 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 text-base"
+                className="h-11 sm:h-12 text-sm sm:text-base touch-manipulation"
                 disabled={isLoading}
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-base font-semibold">Password</Label>
+            <div className="space-y-2 sm:space-y-3">
+              <Label htmlFor="password" className="text-sm sm:text-base font-semibold">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -93,7 +93,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-12 text-base"
+                className="h-11 sm:h-12 text-sm sm:text-base touch-manipulation"
                 disabled={isLoading}
               />
             </div>
@@ -109,14 +109,14 @@ export default function Login() {
 
             <Button 
               type="submit" 
-              className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] mt-8"
+              className="w-full h-12 sm:h-14 text-sm sm:text-base font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-[var(--shadow-glow)] mt-6 sm:mt-8 touch-manipulation"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
-          <div className="mt-8 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             <Link
               to="/register"
               className="text-base text-primary hover:underline font-medium"
