@@ -332,22 +332,22 @@ export default function Settings() {
         </Card>
 
         {/* Privacy Settings */}
-        <Card className="p-8 mb-6 shadow-[var(--shadow-medium)] border-2">
-          <div className="flex items-center gap-3 mb-6">
-            <Lock className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-bold">Privacy & Security</h2>
+        <Card className="p-6 sm:p-8 mb-5 sm:mb-6 shadow-[var(--shadow-medium)] border-2">
+          <div className="flex items-center gap-3 mb-5 sm:mb-6">
+            <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+            <h2 className="text-lg sm:text-xl font-bold">Privacy & Security</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Button
               variant="outline"
-              className="w-full h-12 justify-start"
+              className="w-full h-11 sm:h-12 justify-start text-sm sm:text-base"
               onClick={() => navigate("/reset-password")}
             >
               Change Password
             </Button>
             <Button
               variant="outline"
-              className="w-full h-12 justify-start text-destructive hover:text-destructive"
+              className="w-full h-11 sm:h-12 justify-start text-destructive hover:text-destructive text-sm sm:text-base"
             >
               Delete Account
             </Button>
@@ -356,7 +356,7 @@ export default function Settings() {
 
         {/* Save Button */}
         <Button
-          className="w-full h-14 text-base font-semibold bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow)]"
+          className="w-full h-12 sm:h-14 text-sm sm:text-base font-semibold bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow)] mb-6"
           onClick={() => {
             toast.success("Settings saved successfully!");
           }}
