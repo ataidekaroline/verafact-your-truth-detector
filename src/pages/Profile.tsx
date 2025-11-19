@@ -2,24 +2,27 @@ import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCircle, XCircle, LogOut, Settings, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { UsernameEditDialog } from "@/components/UsernameEditDialog";
+import { VerificationHistoryCard } from "@/components/VerificationHistoryCard";
 
 export default function Profile() {
   const navigate = useNavigate();
   const [isFetching, setIsFetching] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [usernameUpdatedAt, setUsernameUpdatedAt] = useState<string | null>(null);
   const [trueCount, setTrueCount] = useState(0);
   const [falseCount, setFalseCount] = useState(0);
   const [showUsernameDialog, setShowUsernameDialog] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [verificationHistory, setVerificationHistory] = useState<any[]>([]);
 
   useEffect(() => {
     loadUserData();
@@ -39,26 +42,30 @@ export default function Profile() {
       // Get profile data
       const { data: profile } = await supabase
         .from("profiles")
-        .select("username, username_updated_at")
+        .select("username, username_updated_at, avatar_url")
         .eq("id", user.id)
         .single();
 
       if (profile) {
         setUsername(profile.username);
         setUsernameUpdatedAt(profile.username_updated_at);
+        setAvatarUrl(profile.avatar_url);
       }
 
-      // Get verification counts
+      // Get verification history
       const { data: verifications } = await supabase
         .from("verification_history")
-        .select("ml_result")
-        .eq("user_id", user.id);
+        .select("*")
+        .eq("user_id", user.id)
+        .order("verified_at", { ascending: false })
+        .limit(10);
 
       if (verifications) {
         const trueVerifications = verifications.filter(v => v.ml_result === true).length;
         const falseVerifications = verifications.filter(v => v.ml_result === false).length;
         setTrueCount(trueVerifications);
         setFalseCount(falseVerifications);
+        setVerificationHistory(verifications);
       }
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -125,9 +132,13 @@ export default function Profile() {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-5">
               <Avatar className="w-24 h-24 shadow-[var(--shadow-medium)]">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
-                  {getInitials(username)}
-                </AvatarFallback>
+                {avatarUrl ? (
+                  <AvatarImage src={avatarUrl} alt={username} />
+                ) : (
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-3xl">
+                    {getInitials(username)}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <div>
                 <h1 className="text-3xl font-bold mb-2">{username}</h1>
@@ -138,7 +149,7 @@ export default function Profile() {
               variant="outline" 
               size="lg" 
               className="h-12 w-12"
-              onClick={() => setShowUsernameDialog(true)}
+              onClick={() => navigate("/settings")}
             >
               <Settings className="w-6 h-6" />
             </Button>
@@ -188,6 +199,25 @@ export default function Profile() {
           </p>
         </Card>
 
+
+        {/* Recent Verification History */}
+        {verificationHistory.length > 0 && (
+          <Card className="p-8 mb-8 shadow-[var(--shadow-medium)] border-2">
+            <h2 className="text-2xl font-bold mb-6">Recent Verifications</h2>
+            <div className="space-y-4">
+              {verificationHistory.map((verification) => (
+                <VerificationHistoryCard
+                  key={verification.id}
+                  inputText={verification.input_text}
+                  mlResult={verification.ml_result}
+                  confidenceScore={verification.confidence_score}
+                  verifiedAt={verification.verified_at}
+                  referenceSites={verification.reference_sites}
+                />
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Logout Button */}
         <Button 
