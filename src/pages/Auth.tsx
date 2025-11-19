@@ -134,7 +134,6 @@ export default function Auth() {
               </button>
             </div>
           </Card>
-        </div>
       </main>
     </div>
   );
