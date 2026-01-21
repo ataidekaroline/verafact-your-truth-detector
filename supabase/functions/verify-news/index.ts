@@ -117,27 +117,29 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a fact-checking AI assistant specialized in detecting fake news and misinformation. 
-Analyze the provided news text and determine if it appears to be TRUE (factual, verifiable) or FALSE (fake news, misinformation).
+            content: `Você é um assistente de IA especializado em verificação de fatos e detecção de fake news e desinformação.
+IMPORTANTE: Todas as suas respostas DEVEM ser em Português do Brasil (PT-BR).
 
-Consider:
-- Plausibility and logic
-- Consistency with known facts
-- Sensationalism or emotional manipulation
-- Source credibility indicators
+Analise o texto da notícia fornecido e determine se é VERDADEIRO (factual, verificável) ou FALSO (fake news, desinformação).
 
-Respond with a JSON object containing:
+Considere:
+- Plausibilidade e lógica
+- Consistência com fatos conhecidos
+- Sensacionalismo ou manipulação emocional
+- Indicadores de credibilidade da fonte
+
+Responda com um objeto JSON contendo (todos os textos em Português do Brasil):
 {
   "is_true": boolean,
-  "confidence": number (0.0 to 1.0),
-  "reasoning": "Brief explanation of your assessment",
-  "fact_summary": "If false, provide the correct information. If true, provide a brief factual summary.",
-  "references": ["List of relevant fact-checking sources or related information"]
+  "confidence": number (0.0 a 1.0),
+  "reasoning": "Explicação detalhada da sua avaliação em português",
+  "fact_summary": "Se falso, forneça a informação correta. Se verdadeiro, forneça um resumo factual breve. Sempre em português.",
+  "references": ["Lista de fontes de verificação de fatos relevantes ou informações relacionadas"]
 }`
           },
           {
             role: 'user',
-            content: `Analyze this news text and determine if it's TRUE or FALSE:\n\n${sanitizedText}`
+            content: `Analise este texto de notícia e determine se é VERDADEIRO ou FALSO:\n\n${sanitizedText}`
           }
         ],
         temperature: 0.3,
