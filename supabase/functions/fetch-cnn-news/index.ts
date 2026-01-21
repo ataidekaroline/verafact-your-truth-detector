@@ -3,10 +3,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Simple in-memory rate limiting
+const lastExecutionTime = { value: 0 };
+const MIN_EXECUTION_INTERVAL_MS = 300000; // 5 minutes minimum between executions
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -14,6 +18,22 @@ serve(async (req) => {
   }
 
   try {
+    // Rate limiting: prevent abuse by limiting execution frequency
+    const now = Date.now();
+    if (now - lastExecutionTime.value < MIN_EXECUTION_INTERVAL_MS) {
+      const remainingSeconds = Math.ceil((MIN_EXECUTION_INTERVAL_MS - (now - lastExecutionTime.value)) / 1000);
+      console.log(`Rate limited. Next execution allowed in ${remainingSeconds}s`);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `Por favor, aguarde ${remainingSeconds} segundos antes de atualizar novamente.`
+      }), { 
+        status: 429, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+    
+    lastExecutionTime.value = now;
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -35,14 +55,14 @@ serve(async (req) => {
       const { data: existing } = await supabase.from('verified_news').select('id').eq('is_verified', true).limit(10);
       return new Response(JSON.stringify({ 
         success: true, 
-        message: 'Using existing verified news',
+        message: 'Usando notícias verificadas existentes',
         total_fetched: 0,
         total_verified: 0,
         existing_count: existing?.length || 0
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const items: any[] = [];
+    const items: { title: string; url: string; snippet: string; pubDate: Date; category: string }[] = [];
     const itemMatches = Array.from(rssText.matchAll(/<item>([\s\S]*?)<\/item>/g));
     
     for (const match of itemMatches) {
@@ -154,12 +174,12 @@ serve(async (req) => {
       success: true, 
       total_fetched: items.length,
       total_verified: verifiedNews.length,
-      message: `Processed ${verifiedNews.length} verified items`
+      message: `Processadas ${verifiedNews.length} notícias verificadas`
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
     console.error('Function error:', error);
-    return new Response(JSON.stringify({ success: false, error: String(error) }), { 
+    return new Response(JSON.stringify({ success: false, error: 'Erro ao processar notícias' }), { 
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
   }

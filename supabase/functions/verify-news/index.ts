@@ -5,27 +5,105 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple in-memory rate limiting (resets on function cold start)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10; // 10 requests per minute per IP
+
+function checkRateLimit(clientIP: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(clientIP);
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(clientIP, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  
+  record.count++;
+  return true;
+}
+
+// Input validation constants
+const MAX_TEXT_LENGTH = 10000;
+const MIN_TEXT_LENGTH = 10;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { text } = await req.json();
+    // Rate limiting
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('cf-connecting-ip') || 
+                     'unknown';
     
-    if (!text) {
+    if (!checkRateLimit(clientIP)) {
+      console.warn(`Rate limit exceeded for IP: ${clientIP}`);
       return new Response(
-        JSON.stringify({ error: 'Text is required' }),
+        JSON.stringify({ error: 'Limite de requisições excedido. Tente novamente em alguns minutos.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Parse and validate request body
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: 'Corpo da requisição inválido' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+    const { text } = body;
+    
+    // Type validation
+    if (!text || typeof text !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Texto válido é obrigatório' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log('Verifying news with AI:', text.substring(0, 100));
+    // Trim and validate length
+    const cleanText = text.trim();
+    
+    if (cleanText.length < MIN_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Texto muito curto. Mínimo de ${MIN_TEXT_LENGTH} caracteres.` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (cleanText.length > MAX_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Texto excede o limite máximo de ${MAX_TEXT_LENGTH} caracteres.` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize: remove any potential script injection patterns
+    const sanitizedText = cleanText
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .substring(0, MAX_TEXT_LENGTH);
+
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({ error: 'Serviço temporariamente indisponível' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Verifying news with AI:', sanitizedText.substring(0, 100));
 
     // Call Lovable AI for verification
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -59,7 +137,7 @@ Respond with a JSON object containing:
           },
           {
             role: 'user',
-            content: `Analyze this news text and determine if it's TRUE or FALSE:\n\n${text}`
+            content: `Analyze this news text and determine if it's TRUE or FALSE:\n\n${sanitizedText}`
           }
         ],
         temperature: 0.3,
@@ -72,25 +150,28 @@ Respond with a JSON object containing:
       
       if (aiResponse.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          JSON.stringify({ error: 'Limite de requisições excedido. Tente novamente mais tarde.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
       if (aiResponse.status === 402) {
         return new Response(
-          JSON.stringify({ error: 'Payment required. Please add credits to your workspace.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Serviço temporariamente indisponível.' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      throw new Error(`AI API error: ${aiResponse.status}`);
+      return new Response(
+        JSON.stringify({ error: 'Erro ao processar verificação' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const aiData = await aiResponse.json();
     const aiContent = aiData.choices[0].message.content;
     
-    console.log('AI response:', aiContent);
+    console.log('AI response received successfully');
 
     // Parse AI response
     let result;
@@ -132,7 +213,7 @@ Respond with a JSON object containing:
   } catch (error) {
     console.error('Error in verify-news:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'Erro interno do servidor' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
