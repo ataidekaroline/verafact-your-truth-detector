@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.verify-news]
 verify_jwt = false
+
+[functions.analyze-link]
+verify_jwt = false
