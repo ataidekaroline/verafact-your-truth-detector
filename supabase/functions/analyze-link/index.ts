@@ -139,7 +139,7 @@ serve(async (req) => {
     // 3. Check suspicious TLDs
     const hasSuspiciousTld = SUSPICIOUS_TLDS.some(tld => domain.endsWith(tld));
     if (hasSuspiciousTld) {
-      score -= 25;
+      score -= 30;
       issues.push(`🚨 EXTENSÃO SUSPEITA: Domínios ${SUSPICIOUS_TLDS.join(', ')} são frequentemente usados em golpes`);
     }
 
@@ -148,23 +148,52 @@ serve(async (req) => {
       fullUrl.includes(keyword) || domain.includes(keyword)
     );
     if (foundScamKeywords.length > 0) {
-      score -= foundScamKeywords.length * 10;
+      // CRITICAL: More aggressive scoring for scam keywords
+      const keywordPenalty = Math.min(foundScamKeywords.length * 15, 60);
+      score -= keywordPenalty;
       issues.push(`🎣 PALAVRAS DE ALERTA: "${foundScamKeywords.join('", "')}" são comuns em golpes de phishing`);
       
       // Determine scam type based on keywords
       if (foundScamKeywords.some(k => ['resgate', 'valores', 'saque', 'bloqueado', 'liberado'].includes(k))) {
         scamType = 'Golpe do Falso Resgate';
         modusOperandi = 'Criminosos alegam que você tem valores a receber para roubar seus dados bancários e CPF. Órgãos oficiais NUNCA solicitam dados por links.';
+        // If suspicious TLD + scam keywords = CONFIRMED SCAM
+        if (hasSuspiciousTld) {
+          score = 0;
+          issues.unshift('🚫 GOLPE CONFIRMADO: Combinação de extensão suspeita (.site) com palavras típicas de fraude ("resgate", "valores")');
+        }
       } else if (foundScamKeywords.some(k => ['pix', 'transferencia', 'transferência'].includes(k))) {
         scamType = 'Golpe do PIX';
         modusOperandi = 'Sites falsos que prometem transferências ou cadastro de chaves PIX para roubar credenciais bancárias.';
+        if (hasSuspiciousTld) {
+          score = 0;
+          issues.unshift('🚫 GOLPE CONFIRMADO: Link de PIX em domínio suspeito');
+        }
       } else if (foundScamKeywords.some(k => ['premio', 'prêmio', 'ganhe', 'sorteio', 'ganhador'].includes(k))) {
         scamType = 'Golpe de Promoção/Sorteio Falso';
         modusOperandi = 'Promessas de prêmios inexistentes para coletar dados pessoais ou instalar malware no dispositivo.';
+        if (hasSuspiciousTld) {
+          score = 0;
+          issues.unshift('🚫 GOLPE CONFIRMADO: Promoção falsa em domínio suspeito');
+        }
       } else if (foundScamKeywords.some(k => ['atualize', 'confirme', 'verificar', 'suspensa'].includes(k))) {
         scamType = 'Phishing de Atualização Cadastral';
         modusOperandi = 'E-mails e sites falsos que imitam bancos ou empresas pedindo para "atualizar cadastro" e roubam senhas.';
+        if (hasSuspiciousTld) {
+          score = 0;
+          issues.unshift('🚫 GOLPE CONFIRMADO: Phishing em domínio não oficial');
+        }
       }
+    }
+    
+    // Extra check: Suspicious TLD + multiple scam keywords = always scam
+    if (hasSuspiciousTld && foundScamKeywords.length >= 2 && score > 0) {
+      score = 0;
+      if (!scamType) {
+        scamType = 'Fraude Digital';
+        modusOperandi = 'Este link combina múltiplos indicadores de golpe: extensão suspeita e palavras-chave típicas de fraude.';
+      }
+      issues.unshift('🚫 GOLPE CONFIRMADO: Múltiplos indicadores de fraude detectados');
     }
 
     // 5. Brand Squatting Detection
