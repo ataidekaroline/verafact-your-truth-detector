@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, RefreshCw, CheckCircle, ExternalLink, Clock, Landmark, Microscope, Cpu, HeartPulse, AlertTriangle } from "lucide-react";
+import { TrendingUp, RefreshCw, CheckCircle, ExternalLink, Clock, Landmark, Microscope, Cpu, HeartPulse, AlertTriangle, Newspaper, Shield } from "lucide-react";
 
 interface Category {
   id: string;
@@ -22,9 +22,71 @@ interface VerifiedNews {
   confidence_score: number | null;
   verified_at: string | null;
   category_id: string | null;
+  image_url: string | null;
 }
 
 const AUTO_REFRESH_INTERVAL = 60 * 60 * 1000; // 60 minutes
+
+// Source badge component
+const SourceBadge = ({ source }: { source: string }) => {
+  const isNYT = source.toLowerCase().includes('new york times') || source.toLowerCase().includes('nyt');
+  const isCNN = source.toLowerCase().includes('cnn');
+  
+  if (isNYT) {
+    return (
+      <Badge className="text-[10px] bg-slate-900 text-white border-slate-700 gap-1 px-1.5 py-0.5">
+        <Newspaper className="w-2.5 h-2.5" />
+        NYT
+      </Badge>
+    );
+  }
+  
+  if (isCNN) {
+    return (
+      <Badge className="text-[10px] bg-red-600 text-white border-red-500 gap-1 px-1.5 py-0.5">
+        <Newspaper className="w-2.5 h-2.5" />
+        CNN
+      </Badge>
+    );
+  }
+  
+  return (
+    <Badge variant="secondary" className="text-[10px] gap-1 px-1.5 py-0.5">
+      <Shield className="w-2.5 h-2.5" />
+      Verificado
+    </Badge>
+  );
+};
+
+// Enhanced skeleton with processing message
+const NewsCardSkeleton = ({ index }: { index: number }) => (
+  <Card className="p-5 border-2 animate-pulse">
+    <div className="flex items-start gap-3">
+      <Skeleton className="w-12 h-12 rounded-lg" />
+      <div className="flex-1 space-y-2">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-12" />
+        </div>
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+        <div className="flex items-center gap-2 pt-2">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-3 w-16" />
+        </div>
+      </div>
+    </div>
+    {index === 0 && (
+      <div className="mt-3 pt-3 border-t border-dashed">
+        <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
+          <RefreshCw className="w-3 h-3 animate-spin" />
+          Processando e traduzindo notícias...
+        </p>
+      </div>
+    )}
+  </Card>
+);
 
 export const VerifiedNewsFeed = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -70,15 +132,33 @@ export const VerifiedNewsFeed = () => {
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    toast.info("A atualizar feed de notícias...");
+    toast.info("Buscando notícias do NYT e CNN Brasil...", {
+      description: "Traduzindo e verificando automaticamente"
+    });
 
     try {
-      const { error } = await supabase.functions.invoke('fetch-cnn-news');
+      // Try new unified function first, fallback to CNN-only
+      let error;
+      try {
+        const response = await supabase.functions.invoke('fetch-news');
+        error = response.error;
+        
+        if (!error && response.data) {
+          const sources = response.data.sources;
+          toast.success("Feed atualizado!", {
+            description: `NYT: ${sources?.nyt || 0} | CNN: ${sources?.cnn || 0} artigos`
+          });
+        }
+      } catch (e) {
+        // Fallback to legacy function
+        const response = await supabase.functions.invoke('fetch-cnn-news');
+        error = response.error;
+      }
+      
       if (error) throw error;
 
       await new Promise(resolve => setTimeout(resolve, 2000));
       await fetchVerifiedNews();
-      toast.success("Feed atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar:", error);
       toast.error("Falha ao atualizar notícias");
@@ -190,7 +270,7 @@ export const VerifiedNewsFeed = () => {
           className="gap-2"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-          Atualizar
+          {refreshing ? "Atualizando..." : "Atualizar"}
         </Button>
       </div>
       
@@ -214,40 +294,34 @@ export const VerifiedNewsFeed = () => {
       </div>
 
       {/* News Grid */}
-      {loading ? (
+      {loading || refreshing ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="p-5">
-              <div className="flex items-start gap-3">
-                <Skeleton className="w-12 h-12 rounded-lg" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              </div>
-            </Card>
+          {[0, 1, 2, 3].map((i) => (
+            <NewsCardSkeleton key={i} index={i} />
           ))}
         </div>
       ) : newsForCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {newsForCategory.slice(0, 6).map((news) => (
-            <Card key={news.id} className="p-4 sm:p-5 hover:shadow-[var(--shadow-medium)] transition-all hover:scale-[1.01] border-2">
+            <Card key={news.id} className="p-4 sm:p-5 hover:shadow-[var(--shadow-medium)] transition-all hover:scale-[1.01] border-2 overflow-hidden">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-success/10 rounded-lg flex-shrink-0">
                   <CheckCircle className="w-5 h-5 text-success" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-2 mb-2">
-                    <h3 className="font-semibold text-sm leading-snug flex-1 line-clamp-2">
-                      {news.title}
-                    </h3>
+                  {/* Source Badge */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <SourceBadge source={news.source_name} />
                     {news.confidence_score && (
-                      <Badge className="text-xs bg-success/20 text-success border-success/30 flex-shrink-0">
-                        {Math.round(news.confidence_score * 100)}%
+                      <Badge className="text-[10px] bg-success/20 text-success border-success/30 px-1.5 py-0.5">
+                        {Math.round(news.confidence_score * 100)}% confiança
                       </Badge>
                     )}
                   </div>
+                  
+                  <h3 className="font-semibold text-sm leading-snug line-clamp-2 mb-2">
+                    {news.title}
+                  </h3>
                   
                   {news.snippet && (
                     <p className="text-xs text-muted-foreground mb-3 line-clamp-2">

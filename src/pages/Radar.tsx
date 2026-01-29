@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Radio, CheckCircle, ExternalLink, Clock, AlertTriangle } from "lucide-react";
+import { RefreshCw, Radio, CheckCircle, ExternalLink, Clock, AlertTriangle, Newspaper, Shield } from "lucide-react";
 
 interface VerifiedNews {
   id: string;
@@ -18,6 +18,7 @@ interface VerifiedNews {
   confidence_score: number | null;
   verified_at: string | null;
   category_id: string | null;
+  image_url: string | null;
   categories: {
     name: string;
     slug: string;
@@ -25,6 +26,69 @@ interface VerifiedNews {
 }
 
 const AUTO_REFRESH_INTERVAL = 60 * 60 * 1000; // 60 minutes
+
+// Source badge component
+const SourceBadge = ({ source }: { source: string }) => {
+  const isNYT = source.toLowerCase().includes('new york times') || source.toLowerCase().includes('nyt');
+  const isCNN = source.toLowerCase().includes('cnn');
+  
+  if (isNYT) {
+    return (
+      <Badge className="text-[10px] bg-slate-900 text-white border-slate-700 gap-1 px-1.5 py-0.5">
+        <Newspaper className="w-2.5 h-2.5" />
+        NYT
+      </Badge>
+    );
+  }
+  
+  if (isCNN) {
+    return (
+      <Badge className="text-[10px] bg-red-600 text-white border-red-500 gap-1 px-1.5 py-0.5">
+        <Newspaper className="w-2.5 h-2.5" />
+        CNN
+      </Badge>
+    );
+  }
+  
+  return (
+    <Badge variant="secondary" className="text-[10px] gap-1 px-1.5 py-0.5">
+      <Shield className="w-2.5 h-2.5" />
+      Verificado
+    </Badge>
+  );
+};
+
+// Enhanced skeleton loader
+const NewsCardSkeleton = ({ showMessage }: { showMessage?: boolean }) => (
+  <Card className="p-5 border-2 animate-pulse">
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-5 w-12 rounded-full" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </div>
+      <div className="flex items-start gap-3">
+        <Skeleton className="w-10 h-10 rounded-lg flex-shrink-0" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between pt-2 border-t">
+        <Skeleton className="h-3 w-32" />
+        <Skeleton className="h-3 w-16" />
+      </div>
+    </div>
+    {showMessage && (
+      <div className="mt-3 pt-3 border-t border-dashed">
+        <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
+          <RefreshCw className="w-3 h-3 animate-spin" />
+          Buscando NYT e CNN, traduzindo e verificando...
+        </p>
+      </div>
+    )}
+  </Card>
+);
 
 const Radar = () => {
   const [news, setNews] = useState<VerifiedNews[]>([]);
@@ -59,15 +123,36 @@ const Radar = () => {
 
   const handleManualRefresh = async () => {
     setRefreshing(true);
-    toast.info("A buscar notícias mais recentes...");
+    toast.info("Buscando notícias do NYT e CNN Brasil...", {
+      description: "Traduzindo e verificando automaticamente"
+    });
 
     try {
-      const { error } = await supabase.functions.invoke("fetch-cnn-news");
+      // Try new unified function first
+      let error;
+      try {
+        const response = await supabase.functions.invoke("fetch-news");
+        error = response.error;
+        
+        if (!error && response.data) {
+          const sources = response.data.sources;
+          toast.success("Feed atualizado!", {
+            description: `NYT: ${sources?.nyt || 0} | CNN: ${sources?.cnn || 0} artigos processados`
+          });
+        }
+      } catch (e) {
+        // Fallback to legacy function
+        const response = await supabase.functions.invoke("fetch-cnn-news");
+        error = response.error;
+        if (!error) {
+          toast.success("Feed atualizado com sucesso!");
+        }
+      }
+      
       if (error) throw error;
 
       await new Promise(resolve => setTimeout(resolve, 2000));
       await fetchNews();
-      toast.success("Feed atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar feed:", error);
       toast.error("Não foi possível atualizar as notícias");
@@ -153,7 +238,7 @@ const Radar = () => {
                 <Clock className="w-3 h-3" />
                 {lastUpdate 
                   ? `Atualizado: ${formatTimeAgo(lastUpdate.toISOString())}`
-                  : "Atualização automática a cada 60min"
+                  : "Fontes: NYT + CNN Brasil"
                 }
               </p>
             </div>
@@ -166,24 +251,15 @@ const Radar = () => {
             className="gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            Atualizar
+            {refreshing ? "Atualizando..." : "Atualizar"}
           </Button>
         </div>
 
         {/* Content */}
-        {loading ? (
+        {loading || refreshing ? (
           <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Card key={i} className="p-5">
-                <div className="flex items-start gap-3">
-                  <Skeleton className="w-12 h-12 rounded-lg" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
-                  </div>
-                </div>
-              </Card>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <NewsCardSkeleton key={i} showMessage={i === 0} />
             ))}
           </div>
         ) : news.length === 0 ? (
@@ -191,7 +267,7 @@ const Radar = () => {
             <Radio className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
             <h3 className="text-xl font-semibold text-foreground mb-2">Nenhuma notícia verificada</h3>
             <p className="text-muted-foreground mb-6">
-              Clique em atualizar para buscar as notícias mais recentes
+              Clique em atualizar para buscar as notícias mais recentes do NYT e CNN
             </p>
             <Button onClick={handleManualRefresh} disabled={refreshing}>
               <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
@@ -202,11 +278,20 @@ const Radar = () => {
           <div className="space-y-4">
             {news.map((item) => (
               <Card key={item.id} className="p-4 sm:p-5 hover:shadow-[var(--shadow-medium)] transition-all border-2">
-                {item.categories && (
-                  <Badge variant="secondary" className="mb-3 text-xs">
-                    {item.categories.name}
-                  </Badge>
-                )}
+                {/* Source and Category Badges */}
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <SourceBadge source={item.source_name} />
+                  {item.categories && (
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                      {item.categories.name}
+                    </Badge>
+                  )}
+                  {item.confidence_score && (
+                    <Badge className="text-[10px] bg-success/20 text-success border-success/30 px-1.5 py-0.5">
+                      {Math.round(item.confidence_score * 100)}% verificado
+                    </Badge>
+                  )}
+                </div>
                 
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-success/10 rounded-lg flex-shrink-0">
@@ -214,16 +299,9 @@ const Radar = () => {
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2 mb-2">
-                      <h3 className="font-semibold text-base leading-snug flex-1">
-                        {item.title}
-                      </h3>
-                      {item.confidence_score && (
-                        <Badge className="text-xs bg-success/20 text-success border-success/30 flex-shrink-0">
-                          {Math.round(item.confidence_score * 100)}%
-                        </Badge>
-                      )}
-                    </div>
+                    <h3 className="font-semibold text-base leading-snug mb-2">
+                      {item.title}
+                    </h3>
                     
                     {item.snippet && (
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
